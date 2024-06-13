@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    Note right of browser: The user click "Save" button
+    Note right of browser: The browser appends new note to list of notes before sending it to server
+    Note right of browser: The browser sends note to the server using XMLHttpRequest 
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    activate server
+    Note left of server: Server adds note to the array of notes
+    server-->>browser: {"message": "note created"}
+    deactivate server
