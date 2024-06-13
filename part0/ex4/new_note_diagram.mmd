@@ -8,7 +8,7 @@ sequenceDiagram
     activate server
     Note left of server: The server stores the contents of the 'note' field of the POST request in the notes array
     server-->>browser: HTML document
-    Note left of server: Server responds with the same HTML document as in the case of initial loading page with GET /note
+    Note left of server: Server responds with the same HTML document as in the case of initial loading page with GET /notes
     deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css

@@ -2,7 +2,7 @@ sequenceDiagram
     participant browser
     participant server
 
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/SPA
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa
     activate server
     server-->>browser: HTML document
     Note left of server: Server responds with the same HTML document as in the case of initial loading page with GET /note
