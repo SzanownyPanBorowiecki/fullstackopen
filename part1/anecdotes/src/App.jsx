@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import {useState} from 'react'
 
 const App = () => {
   const anecdotes = [
@@ -17,7 +17,7 @@ const App = () => {
   const handleNext = () => {
     setSelected(Math.floor(Math.random() * anecdotes.length))
   }
-
+  
   const handleVote = () => {
     const copy = [...votes]
     copy[selected]++
