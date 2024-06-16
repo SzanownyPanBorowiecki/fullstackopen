@@ -4,7 +4,10 @@ const Part = props => <p>{props.name} {props.exercises}</p>
 
 const Content = props => (
   <div>
-    {props.parts.map((data) => <Part name={data.name} exercises={data.exercises} />)}
+    {props.parts.map(
+      data => 
+        <Part name={data.name} exercises={data.exercises} />
+    )}
   </div>
 )
 
