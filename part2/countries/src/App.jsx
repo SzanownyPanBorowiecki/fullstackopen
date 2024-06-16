@@ -114,6 +114,7 @@ const App = () => {
 
   useEffect(() => {
     setStatusMessage(`Downloading countries data...`)
+
     countryService
       .getAll()
       .then(initialCountries => {
