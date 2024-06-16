@@ -116,7 +116,14 @@ const App = () => {
     setStatusMessage(`Downloading countries data...`)
     countryService
       .getAll()
-      .then(initialCountries => setCountries(initialCountries))
+      .then(initialCountries => {
+        initialCountries.sort((a,b) => {
+          if (a.name.common > b.name.common) return 1
+          else if (a.name.common < b.name.common) return -1
+          return 0
+        })
+        setCountries(initialCountries)
+        })
       .then(() => setStatusMessage(null))
       .catch(error => setStatusMessage(`Error downloading countries: ${error}`))
   }, [])
