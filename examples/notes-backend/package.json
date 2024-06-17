@@ -1,0 +1,26 @@
+{
+  "name": "backend",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ui": "rm -rf dist && cd ../notes-frontend/ && pnpm run build && cp -r dist ../notes-backend/",
+    "deploy": "fly deploy",
+    "deploy:full": "pnpm run build:ui && pnpm run deploy",
+    "logs:prod": "fly logs"
+  },
+  "author": "Matti Luukkainen",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.1"
+  },
+  "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.7",
+    "nodemon": "^3.1.3"
+  }
+}
