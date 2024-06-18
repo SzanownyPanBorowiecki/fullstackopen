@@ -5,14 +5,16 @@ GET http://localhost:3001/api/persons
 GET http://localhost:3001/info
 
 ### Get person with existing id
-GET http://localhost:3001/api/persons/1
+GET http://localhost:3001/api/persons/6671dd64103d2d4fa84c9295
+
+### Person with nonexisting valid id
+GET http://localhost:3001/api/persons/66714e1f0f89bd0702494b18
+
+### Get person with malformed id
+GET http://localhost:3001/api/persons/123
 
 
-### Person with nonexisting id
-GET http://localhost:3001/api/persons/1000
-
-
-### Delete person with id=3
+### Delete person with malformed id
 DELETE http://localhost:3001/api/persons/3
 
 ### Add new person
@@ -20,6 +22,6 @@ POST http://localhost:3001/api/persons/ HTTP/1.1
 content-type: application/json
 
 {
-    "name": "pawel",
+    "name": "asd",
     "number": "8"
 }

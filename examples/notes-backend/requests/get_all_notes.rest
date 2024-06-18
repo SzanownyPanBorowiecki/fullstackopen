@@ -6,7 +6,6 @@ content-type: application/json
 
 {
     "name": "sample",
-    "time": "test"
 }
 
 ###
@@ -15,6 +14,5 @@ content-type: application/json
 
 {
     "important": true,
-    "content": "hello",
-    "time": "test"
+    "content": "hello"
 }
