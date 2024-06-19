@@ -40,7 +40,6 @@ const Persons = ({persons, onPersonRemove}) => (
 )
 
 const Notification = ({notification}) => {
-  console.log('notification: ', notification)
   if (notification === null) return null
 
   return (
@@ -55,6 +54,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [notification, setNotification] = useState(null)
+  const [notificationTimeout, setNotificationTimeout] = useState(null)
 
   // Download data from the server
   useEffect(() => {
@@ -62,6 +62,14 @@ const App = () => {
       .getAll()
       .then(initialPersons => setPersons(initialPersons))
   }, [])
+
+  // Hide notification after 5s
+  useEffect(() => {
+    if (notification) {
+      clearTimeout(notificationTimeout)
+      setNotificationTimeout(setTimeout(() => setNotification(null), 5000))
+    }
+  }, [notification])
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -84,12 +92,11 @@ const App = () => {
             persons.map(p => p.id !== returnedPerson.id ? p : returnedPerson)
           )
         })
-        .catch(() => {
+        .catch(error => {
           setNotification({
             type: 'error', 
-            message: `Information of ${existingPerson.name} has already been removed from server`
+            message: error.response.data.error
           })
-          setTimeout(()=> setNotification(null), 5000)          
         })
     }
     else {
@@ -106,7 +113,12 @@ const App = () => {
             type: 'success', 
             message: `Added ${returnedPerson.name}`
           })
-          setTimeout(()=> setNotification(null), 5000)
+        })
+        .catch(error => {
+          setNotification({
+            type: 'error',
+            message: error.response.data.error
+          })
         })
     }
 

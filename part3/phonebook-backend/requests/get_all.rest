@@ -25,3 +25,21 @@ content-type: application/json
     "name": "asd",
     "number": "8"
 }
+
+### Add new person - empty data
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "aaasd",
+    "number": "11-111111"
+}
+
+### Update person
+PUT http://localhost:3001/api/persons/6671ec273fe6bf7a2106d364
+content-type: application/json
+
+{
+    "name": "aaasd",
+    "number": "111-1"
+}

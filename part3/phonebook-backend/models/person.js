@@ -11,8 +11,20 @@ mongoose.connect(process.env.MONGODB_URI)
     })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String
+    name: {
+        type: String,
+        minLength: 3,
+        required: true
+    },
+    number: {
+        type: String,
+        minLength: 8,
+        required: true,
+        validate: {
+            validator: v => /^\d{2,3}-\d\d*$/.test(v),
+            message: 'The phone number must be formed of two parts that are separated by -, the first part has two or three numbers and the second part also consists of numbers'
+        }
+    },
 })
 
 personSchema.set('toJSON', {
