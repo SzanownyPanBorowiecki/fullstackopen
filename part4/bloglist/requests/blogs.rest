@@ -14,7 +14,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb
     "likes": 42
 }
 
-
 ### POST new blog, invalid token
 POST http://localhost:3003/api/blogs HTTP/1.1
 Content-Type: application/json
@@ -26,3 +25,9 @@ Authorization: Bearer xyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb
     "url": "http://example.com",
     "likes": 42
 }
+
+
+### DELETE existing blog, valid user
+DELETE http://localhost:3003/api/blogs/667b0669fe12707e613e69a9 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY2N2IwMzE2MjYyMTIyMDgwZDljMWM2ZSIsImlhdCI6MTcxOTMzNzg4MCwiZXhwIjoxNzE5MzQxNDgwfQ.z2jHX1qoidWXNWizMTrbPmVD1AQwYLtAj8di3IGYjKw

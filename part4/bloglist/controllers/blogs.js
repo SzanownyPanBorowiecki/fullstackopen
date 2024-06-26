@@ -6,24 +6,24 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 
-blogsRouter.get('/', async (request, response, next) => {
+blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
     .find({})
     .populate('user', { username: 1, name: 1 })
 
-  response.json(blogs)  
+  response.json(blogs)
 })
 
-blogsRouter.post('/', userExtractor, async (request, response, next) => {
+blogsRouter.post('/', userExtractor, async (request, response) => {
   const user = await User.findById(request.user.id)
-  const blog = new Blog({...request.body, user: user._id})
+  const blog = new Blog({ ...request.body, user: user._id })
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
-  response.status(201).json(savedBlog)    
+  response.status(201).json(savedBlog)
 })
 
-blogsRouter.put('/:id', userExtractor, async (request, response, next) => {
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const blog = await Blog.findById(request.params.id)
   if (!blog) {
     return response.status(404)
@@ -34,17 +34,17 @@ blogsRouter.put('/:id', userExtractor, async (request, response, next) => {
   }
 
   const result = await Blog.findByIdAndUpdate(
-    request.params.id, 
+    request.params.id,
     request.body,
     { new: true, runValidators: true, context: 'query' }
   )
   if (!result) return response.status(404)
-  
+
   response.json(result)
 })
 
 
-blogsRouter.delete('/:id', userExtractor, async (request, response, next) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const blog = await Blog.findById(request.params.id)
 
   if (!blog) {

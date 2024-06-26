@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: v => v.length >= 3
-    } 
+    }
   },
   name: {
     type: String,

@@ -10,11 +10,14 @@ const getToken = request => {
 const userExtractor = (request, response, next) => {
   const token = getToken(request)
   const decodedToken = jwt.verify(token, process.env.SECRET)
-  
+
   if (!decodedToken.id) {
-    return response.status(401).json({ error: 'invalid token' })
+    next({
+      name: 'TokenAuthError',
+      message: 'Invalid token'
+    })
   }
-  
+
   request.user = {
     username: decodedToken.username,
     id: decodedToken.id

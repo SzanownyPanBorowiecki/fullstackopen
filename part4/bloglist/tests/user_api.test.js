@@ -1,26 +1,26 @@
-const { describe, test, beforeEach, after } = require('node:test')
-const assert = require('node:assert')
-const supertest = require('supertest')
+// This needs to be before require('supertest)
+// otherwise error handling middleware doesn't catch exceptions
+require('express-async-errors')
 
-const app = require('../app')
-const config = require('../utils/config')
-const User = require('../models/user')
+const { test, describe, after, before, beforeEach } = require('node:test')
+const assert = require('node:assert')
+
+const supertest = require('supertest')
+const mongoose = require('mongoose')
 const helper = require('../utils/test_helper')
 
-const mongoose = require('mongoose')
+const app = require('../app')
+const api = supertest(app)
+
+
+const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
 
-const api = supertest(app)
 
-describe('when there are users in the database', () => {
+describe('when there are users in the database', async () => {
   beforeEach(async () => {
-    await User.deleteMany({})
-  
-    for (let userData of helper.initialUsers) {
-      let userObject = new User(userData)
-      await userObject.save()
-    }
+    await helper.resetDb()
   })
 
   test('listing users returns HTTP 200, JSON data', async () => {
@@ -29,14 +29,19 @@ describe('when there are users in the database', () => {
       .expect('Content-Type', /application\/json/)
   })
 
-  
+
   test('adding user that already exists returns HTTP 400', async () => {
+    const existingUsers = await User.find({})
+    const existingUsername = existingUsers[0].username
+
+    const userData = {
+      username: existingUsername,
+      name: 'Test name',
+      password: 'secret'
+    }
+    console.log('userdata', userData)
     await api.post('/api/users')
-      .send({
-        username: helper.initialUsers[0].username,
-        name: 'Test name',
-        password: 'secret'
-      })
+      .send(userData)
       .expect(400)
       .expect('Content-Type', /application\/json/)
   })
@@ -44,13 +49,9 @@ describe('when there are users in the database', () => {
 
 
 describe('adding new users', () => {
-  beforeEach(async () => {
-    await User.deleteMany({})
-  })
-  
   test('adding new user', async () => {
     const userData = {
-      username: 'username',
+      username: 'nonexistentusername',
       name: 'name',
       password: 'secret'
     }
@@ -66,13 +67,13 @@ describe('adding new users', () => {
       .findById(userId, '-_id username name passwordHash')
       .lean()
 
-    const isValidPassword = await bcrypt.compare(userData.password, userInDb.passwordHash)
-    assert.strictEqual(isValidPassword, true)
+    const isWorkingPasswordHash = await bcrypt.compare(userData.password, userInDb.passwordHash)
+    assert.strictEqual(isWorkingPasswordHash, true)
     assert.deepStrictEqual(
       {
         username: userData.username,
         name: userData.name,
-      }, 
+      },
       {
         username: userInDb.username,
         name: userInDb.name

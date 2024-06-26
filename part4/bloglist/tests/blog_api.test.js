@@ -1,4 +1,8 @@
-const { test, describe, after, beforeEach } = require('node:test')
+// This needs to be before require('supertest)
+// otherwise error handling middleware doesn't catch exceptions
+require('express-async-errors')
+
+const { test, describe, after, before, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const supertest = require('supertest')
 require('dotenv').config()
@@ -14,62 +18,52 @@ const User = require('../models/user')
 
 
 describe('when there are blogs in the database', () => {
+
   beforeEach(async () => {
-    await Blog.deleteMany({})
-    await User.deleteMany({})
-
-    for (let blog of helper.initialBlogs) {
-      let blogObject = new Blog(blog)
-      await blogObject.save()
-    }
-
-    for (let user of helper.initialUsers) {
-      let userObject = new User(user)
-      await userObject.save()
-    }
+    await helper.resetDb()
   })
-  
+
   test('correct amount of blogs returned in JSON format', async () => {
     const resp = await api
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
-    
+
     assert.strictEqual(resp.body.length, helper.initialBlogs.length)
   })
-  
+
   test('unique identifier property of the blog posts is named id instead of _id', async () => {
     const resp = await api
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
-  
-    assert(resp.body[0].hasOwnProperty('id'))
-    assert(!resp.body[0].hasOwnProperty('_id'))
+
+    assert.strictEqual(Object.hasOwn(resp.body[0], 'id'), true)
+    assert.strictEqual(Object.hasOwn(resp.body[0], '_id'), false)
   })
-  
+
   describe('updating blogs', () => {
     test('existing blog can be updated by its creator with proper token', async () => {
       const user = helper.initialUsers[0]
       const token = jwt.sign({ id: user._id, username: user.username }, process.env.SECRET)
       const blogId = user.blogs[0]
-  
+
       const updatedBlogData = {
         title: 'Updated title',
         author: 'Updated author',
         url: 'http://updated.com',
         likes: 42
       }
-      
+
       const resp = await api
         .put(`/api/blogs/${blogId}`)
-        .set({ 'Authorization': `Bearer ${token}`})
+        .set({ 'Authorization': `Bearer ${token}` })
         .send(updatedBlogData)
         .expect(200)
         .expect('Content-Type', /application\/json/)
-  
+
       assert.strictEqual(resp.body.id, blogId)
-      
+
       const updatedBlogInDb = await Blog.findById(blogId, '-_id title author url likes').lean()
       assert.deepStrictEqual(updatedBlogData, updatedBlogInDb)
     })
@@ -91,30 +85,30 @@ describe('when there are blogs in the database', () => {
 
       const initialBlogInDb = await Blog.findById(blogId, '-_id title author url likes').lean()
 
-      const resp = await api
+      await api
         .put(`/api/blogs/${blogId}`)
-        .set({ 'Authorization': `Bearer ${nonCreatorToken}`})
+        .set({ 'Authorization': `Bearer ${nonCreatorToken}` })
         .send(updatedBlogData)
         .expect(401)
         .expect('Content-Type', /application\/json/)
-  
+
       const updatedBlogInDb = await Blog.findById(blogId, '-_id title author url likes').lean()
       assert.deepStrictEqual(initialBlogInDb, updatedBlogInDb)
     })
   })
-  
+
 
   describe('deleting blogs', () => {
     test('existing blog can be deleted by its creator with proper token, 401 Unauthorized', async () => {
       const user = helper.initialUsers[0]
       const token = jwt.sign({ id: user._id, username: user.username }, process.env.SECRET)
       const blogId = user.blogs[0]
-  
+
       await api
         .delete(`/api/blogs/${blogId}`)
-        .set({ 'Authorization': `Bearer ${token}`})
+        .set({ 'Authorization': `Bearer ${token}` })
         .expect(204)
-  
+
       const blogData = await helper.blogData(blogId)
       assert.strictEqual(blogData, undefined)
     })
@@ -130,7 +124,7 @@ describe('when there are blogs in the database', () => {
 
       await api
         .put(`/api/blogs/${blogId}`)
-        .set({ 'Authorization': `Bearer ${nonCreatorToken}`})
+        .set({ 'Authorization': `Bearer ${nonCreatorToken}` })
         .expect(401)
         .expect('Content-Type', /application\/json/)
 
@@ -150,19 +144,19 @@ describe('adding new blogs', () => {
     const blogsAtStart = await helper.blogsInDb()
 
     const newBlog = {
-      title: "Test blog",
-      author: "Test author",
-      url: "http://example.com",
+      title: 'Test blog',
+      author: 'Test author',
+      url: 'http://example.com',
       likes: 2137
     }
-  
+
     const result = await api
       .post('/api/blogs')
-      .set({ 'Authorization': `Bearer ${token}`})
+      .set({ 'Authorization': `Bearer ${token}` })
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
-  
+
     const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, blogsAtStart.length + 1)
 
@@ -175,40 +169,40 @@ describe('adding new blogs', () => {
     assert.strictEqual(userData.blogs.length, user.blogs.length + 1)
   })
 
-  
+
   test('if the likes property is missing from the request, it will default to 0', async () => {
     const newBlog = {
-      title: "Test blog",
-      author: "Test author",
-      url: "http://example.com"
+      title: 'Test blog',
+      author: 'Test author',
+      url: 'http://example.com'
     }
-  
+
     const result = await api
       .post('/api/blogs')
-      .set({ 'Authorization': `Bearer ${token}`})
+      .set({ 'Authorization': `Bearer ${token}` })
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
-  
+
     const savedBlogId = result.body.id
-  
+
     const savedBlog = await Blog
       .findById(savedBlogId, '-_id title author url likes')
       .lean()
-  
-    assert.deepStrictEqual(savedBlog, {...newBlog, likes: 0})
+
+    assert.deepStrictEqual(savedBlog, { ...newBlog, likes: 0 })
   })
 
   test('if title is missing return code 400', async () => {
     const newBlog = {
-      author: "Test author",
-      url: "http://example.com",
+      author: 'Test author',
+      url: 'http://example.com',
       likes: 2137
     }
 
     await api
       .post('/api/blogs')
-      .set({ 'Authorization': `Bearer ${token}`})
+      .set({ 'Authorization': `Bearer ${token}` })
       .send(newBlog)
       .expect(400)
       .expect('Content-Type', /application\/json/)
@@ -217,14 +211,14 @@ describe('adding new blogs', () => {
 
   test('if url is missing return code 400', async () => {
     const newBlog = {
-      title: "Test title",
-      author: "Test author",
+      title: 'Test title',
+      author: 'Test author',
       likes: 2137
     }
 
     await api
       .post('/api/blogs')
-      .set({ 'Authorization': `Bearer ${token}`})
+      .set({ 'Authorization': `Bearer ${token}` })
       .send(newBlog)
       .expect(400)
       .expect('Content-Type', /application\/json/)
@@ -233,8 +227,8 @@ describe('adding new blogs', () => {
 
   test('if token is missing return code 401', async () => {
     const newBlog = {
-      title: "Test title",
-      author: "Test author",
+      title: 'Test title',
+      author: 'Test author',
       likes: 2137
     }
 
@@ -246,7 +240,6 @@ describe('adding new blogs', () => {
   })
 
 })
-
 
 after(async () => {
   mongoose.connection.close()

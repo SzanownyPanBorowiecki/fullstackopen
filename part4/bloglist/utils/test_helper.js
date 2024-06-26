@@ -1,55 +1,56 @@
+const usersRouter = require('../controllers/users')
 const Blog = require('../models/blog')
-const jwt = require('jsonwebtoken')
+const User = require('../models/user')
 
 const initialBlogs = [
   {
     _id: '667b21cb1587db4a621ce701',
-    title: "React patterns",
-    author: "Michael Chan",
-    url: "https://reactpatterns.com/",
+    title: 'React patterns',
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/',
     likes: 7,
     user: '667b20a0b3ce5288e41b38f2'
   },
   {
     _id: '667b21dbd431969af3c69532',
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+    title: 'Go To Statement Considered Harmful',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
     likes: 5,
     user: '667b20a0b3ce5288e41b38f2'
   },
   {
     _id: '667b21edcf1e3aff38c9e1de',
-    title: "Canonical string reduction",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
     likes: 12,
     user: '667b20a0b3ce5288e41b38f2'
   },
   {
     _id: '667b21f1a8c6a84591b30dc3',
-    title: "First class tests",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+    title: 'First class tests',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
     likes: 10,
     user: '667b20a9b3ce5288e41b38f4'
   },
   {
     _id: '667b21f63d8045cb5e6d8508',
-    title: "TDD harms architecture",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+    title: 'TDD harms architecture',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
     likes: 0,
     user: '667b20a9b3ce5288e41b38f4'
   },
   {
     _id: '667b21fa36f4eec8a9d90037',
-    title: "Type wars",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+    title: 'Type wars',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
     likes: 2,
     user: '667b20b6b3ce5288e41b38f6'
-  }  
+  }
 ]
 
 const initialUsers = [
@@ -76,11 +77,25 @@ const initialUsers = [
   }
 ]
 
-const docsInDb = async Model => {
-  const res = await Model.find({})
-  return res.map(doc => doc.toJSON())
-}
+const resetDb = async () => {
+  await User.deleteMany({})
+  await Blog.deleteMany({})
 
+
+  for (let blog of initialBlogs) {
+    //try {
+      const blogObject = new Blog(blog)
+      await blogObject.save()  
+    //} catch(e) {}
+  }
+
+  for (let user of initialUsers) {
+    //try {
+      const userObject = new User(user)
+      await userObject.save()  
+    //} catch(e) {}
+  }
+}
 
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
@@ -89,15 +104,16 @@ const blogsInDb = async () => {
 
 const blogData = async (id) => {
   const result = await Blog
-    .find({_id: id}, '-_id title author url likes')
+    .find({ _id: id }, '-_id title author url likes')
     .lean()
-  return (result.length == 0) ? undefined : result[0]
+  return (result.length === 0) ? undefined : result[0]
 }
 
-module.exports = { 
+module.exports = {
   initialBlogs,
   initialUsers,
-  
+  resetDb, 
+
   blogsInDb,
   blogData
 }
