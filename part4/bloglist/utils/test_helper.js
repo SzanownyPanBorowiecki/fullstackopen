@@ -1,4 +1,3 @@
-const usersRouter = require('../controllers/users')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -83,17 +82,13 @@ const resetDb = async () => {
 
 
   for (let blog of initialBlogs) {
-    //try {
-      const blogObject = new Blog(blog)
-      await blogObject.save()  
-    //} catch(e) {}
+    const blogObject = new Blog(blog)
+    await blogObject.save()
   }
 
   for (let user of initialUsers) {
-    //try {
-      const userObject = new User(user)
-      await userObject.save()  
-    //} catch(e) {}
+    const userObject = new User(user)
+    await userObject.save()
   }
 }
 
@@ -112,7 +107,7 @@ const blogData = async (id) => {
 module.exports = {
   initialBlogs,
   initialUsers,
-  resetDb, 
+  resetDb,
 
   blogsInDb,
   blogData

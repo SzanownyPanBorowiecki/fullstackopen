@@ -2,7 +2,7 @@
 // otherwise error handling middleware doesn't catch exceptions
 require('express-async-errors')
 
-const { test, describe, after, before, beforeEach } = require('node:test')
+const { test, describe, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const supertest = require('supertest')
 require('dotenv').config()

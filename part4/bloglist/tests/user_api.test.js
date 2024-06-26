@@ -2,7 +2,7 @@
 // otherwise error handling middleware doesn't catch exceptions
 require('express-async-errors')
 
-const { test, describe, after, before, beforeEach } = require('node:test')
+const { test, describe, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 
 const supertest = require('supertest')
@@ -15,7 +15,6 @@ const api = supertest(app)
 
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
-
 
 
 describe('when there are users in the database', async () => {

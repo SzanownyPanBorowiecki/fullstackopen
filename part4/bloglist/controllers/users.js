@@ -12,7 +12,7 @@ usersRouter.get('/', async (request, response) => {
 })
 
 
-usersRouter.post('/', async (request, response, next) => {
+usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body
 
   // Password validation
@@ -23,13 +23,8 @@ usersRouter.post('/', async (request, response, next) => {
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)
   const newUser = new User({ username, name, passwordHash })
-  //try {
-    const savedUser = await newUser.save()
-    response.status(201).json(savedUser)
-  //} catch(e) {
-  //  console.log('caught: ', e)
-  //  next(e)
-  //}
+  const savedUser = await newUser.save()
+  response.status(201).json(savedUser)
 })
 
 
