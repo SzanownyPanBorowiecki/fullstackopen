@@ -1,0 +1,36 @@
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY2N2IwMzE2MjYyMTIyMDgwZDljMWM2ZSIsImlhdCI6MTcxOTMzNzg4MCwiZXhwIjoxNzE5MzQxNDgwfQ.z2jHX1qoidWXNWizMTrbPmVD1AQwYLtAj8di3IGYjKw
+
+### Get all blogs
+GET http://localhost:3003/api/blogs
+
+
+### POST new blog, valid token
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "title": "Title",
+    "author": "Author",
+    "url": "http://example.com",
+    "likes": 42
+}
+
+
+### POST new blog, invalid token
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer hello
+
+{
+    "title": "Title",
+    "author": "Author",
+    "url": "http://example.com",
+    "likes": 42
+}
+
+
+### DELETE existing blog, valid user
+DELETE http://localhost:3003/api/blogs/667b0669fe12707e613e69a9
+Content-Type: application/json
+Authorization: Bearer {{token}}

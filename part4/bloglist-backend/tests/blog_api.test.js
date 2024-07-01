@@ -118,7 +118,9 @@ describe('when there are blogs in the database', () => {
       const blogId = creator.blogs[0]
 
       const nonCreator = helper.initialUsers[1]
-      const nonCreatorToken = jwt.sign({ id: nonCreator._id, username: nonCreator.username }, process.env.SECRET)
+      const nonCreatorToken = jwt.sign({
+        id: nonCreator._id,
+        username: nonCreator.username }, process.env.SECRET)
 
       const initialBlog = await Blog.findById(blogId).lean()
 
