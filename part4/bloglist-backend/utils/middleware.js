@@ -45,7 +45,8 @@ const errorHandler = (error, request, response, next) => {
     return response.status(401).json({ error: `Token error: ${error.message}` })
   }
 
-  next(error)
+  return response.status(401).json({ error: `Unknown error: ${error.message}` })
+  //next(error)
 }
 
 

@@ -18,8 +18,10 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   const user = await User.findById(request.user.id)
   const blog = new Blog({ ...request.body, user: user._id })
   const savedBlog = await blog.save()
+
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
+
   response.status(201).json(savedBlog)
 })
 
@@ -29,15 +31,18 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
     return response.status(404)
   }
 
-  if (blog.user.toString() !== request.user.id) {
-    return response.status(401).json({ error: 'modification not permitted' })
-  }
+  //if (blog.user.toString() !== request.user.id) {
+  //  return response.status(401).json({ error: 'modification of another user\'s blog not permitted' })
+  //}
 
-  const result = await Blog.findByIdAndUpdate(
-    request.params.id,
-    request.body,
-    { new: true, runValidators: true, context: 'query' }
-  )
+  const result = await Blog
+    .findByIdAndUpdate(
+      request.params.id,
+      request.body,
+      { new: true, runValidators: true, context: 'query' }
+    )
+    .populate('user', { username: 1, name: 1 })
+
   if (!result) return response.status(404)
 
   response.json(result)
@@ -45,6 +50,7 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
 
 
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {
+  const user = await User.findById(request.user.id)
   const blog = await Blog.findById(request.params.id)
 
   if (!blog) {
@@ -52,10 +58,14 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   }
 
   if (blog.user.toString() !== request.user.id) {
-    return response.status(401).json({ error: 'deletion not permitted' })
+    return response.status(401).json({ error: 'deletion of another user\'s blog not permitted' })
   }
 
   await blog.deleteOne()
+
+  user.blogs = user.blogs.filter(b => b._id !== blog._id)
+  await user.save()
+
   response.status(204).send()
 })
 
