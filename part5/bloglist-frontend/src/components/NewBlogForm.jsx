@@ -17,18 +17,21 @@ const NewBlogForm = ({ createNewBlogHandler }) => {
       }}>
         <div>
           title: <input
+            id='input-title'
             type="text"
             value={title}
             onChange={({ target }) => setTitle(target.value)} />
         </div>
         <div>
           author: <input
+            id='input-author'
             type="text"
             value={author}
             onChange={({ target }) => setAuthor(target.value)} />
         </div>
         <div>
           url: <input
+            id='input-url'
             type="text"
             value={url}
             onChange={({ target }) => setUrl(target.value)} />
