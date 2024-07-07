@@ -18,6 +18,7 @@ const LoginForm = ({ loginHandler }) => {
         <div>
           username: <input
             autoFocus
+            data-testid="LoginForm:input:username"
             ref={loginRef}
             type="text"
             value={username}
@@ -25,11 +26,12 @@ const LoginForm = ({ loginHandler }) => {
         </div>
         <div>
           password: <input
+            data-testid="LoginForm:input:password"
             type="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)} />
         </div>
-        <button type="submit">Login</button>
+        <button data-testid="LoginForm:button:login" type="submit">Login</button>
       </form>
     </div>
   )

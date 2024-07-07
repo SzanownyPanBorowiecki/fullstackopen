@@ -173,7 +173,7 @@ const App = () => {
               key={blog.id}
               blog={blog}
               likeHandler={handleLike}
-              removeButtonVisible={blog.user.username === user.username}
+              removeButtonVisible={blog.user?.username === user.username}
               removeHandler={handleRemove}
             />
           )

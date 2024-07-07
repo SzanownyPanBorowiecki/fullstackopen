@@ -17,15 +17,15 @@ const Blog = ({
   const showRemoveButtonWhenVisible = { display: removeButtonVisible ? '' : 'none' }
   return (
     <div className='blog-entry'>
-      <div>
+      <div className='blog-header'>
         {blog.title} by {blog.author}
         <button onClick={toggleDetails}>{ detailsVisible ? 'hide' : 'show' }</button>
       </div>
 
-      <div style={showDetailsWhenVisible}>
+      <div className='blog-details' style={showDetailsWhenVisible}>
         <div>URL: {blog.url}</div>
         <div>Likes: {blog.likes} <button onClick={() => likeHandler(blog)}>like</button></div>
-        <div>Added by: {blog.user.name}</div>
+        <div>Added by: {blog.user?.name}</div>
         <div>
           <button className='remove-button' style={showRemoveButtonWhenVisible} onClick={() => removeHandler(blog)}>
             remove
