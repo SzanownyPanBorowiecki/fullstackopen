@@ -1,5 +1,4 @@
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY2N2IwMzE2MjYyMTIyMDgwZDljMWM2ZSIsImlhdCI6MTcxOTMzNzg4MCwiZXhwIjoxNzE5MzQxNDgwfQ.z2jHX1qoidWXNWizMTrbPmVD1AQwYLtAj8di3IGYjKw
-
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY2N2IyMGI2YjNjZTUyODhlNDFiMzhmNiIsImlhdCI6MTcyMDQ0NjUyOCwiZXhwIjoxNzIwNDUwMTI4fQ.4u6V_Y6q7cRMVV6sNHyuMKlz5PMr-HcbxTarpkCyTpk
 ### Get all blogs
 GET http://localhost:3003/api/blogs
 

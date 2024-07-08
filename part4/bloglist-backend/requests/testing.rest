@@ -1,2 +1,2 @@
 ### Reset users db
-POST http://localhost:3003/api/testing/reset/users
+POST http://localhost:3003/api/testing/reset

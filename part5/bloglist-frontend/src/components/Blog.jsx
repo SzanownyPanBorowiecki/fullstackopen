@@ -23,7 +23,7 @@ const Blog = ({
       </div>
 
       <div className='blog-details' style={showDetailsWhenVisible}>
-        <div>URL: {blog.url}</div>
+        <div>URL: <a href={blog.url}>{blog.url}</a></div>
         <div>Likes: {blog.likes} <button onClick={() => likeHandler(blog)}>like</button></div>
         <div>Added by: {blog.user?.name}</div>
         <div>

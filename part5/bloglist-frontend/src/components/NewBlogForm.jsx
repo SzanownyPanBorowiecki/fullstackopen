@@ -17,6 +17,7 @@ const NewBlogForm = ({ createNewBlogHandler }) => {
       }}>
         <div>
           title: <input
+            data-testid='NewBlogForm:input:title'
             id='input-title'
             type="text"
             value={title}
@@ -24,6 +25,7 @@ const NewBlogForm = ({ createNewBlogHandler }) => {
         </div>
         <div>
           author: <input
+            data-testid='NewBlogForm:input:author'
             id='input-author'
             type="text"
             value={author}
@@ -31,6 +33,7 @@ const NewBlogForm = ({ createNewBlogHandler }) => {
         </div>
         <div>
           url: <input
+            data-testid='NewBlogForm:input:url'
             id='input-url'
             type="text"
             value={url}
