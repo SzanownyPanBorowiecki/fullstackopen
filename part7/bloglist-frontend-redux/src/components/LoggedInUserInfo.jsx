@@ -1,20 +1,20 @@
 import { useSelector, useDispatch } from 'react-redux'
 
-import { logoutUser } from '#reducers/userReducer'
+import { removeAuth } from '#reducers/authReducer'
 import { notifySuccess } from '#reducers/notificationReducer'
 
 const LoggedInUserInfo = () => {
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user)
+  const auth = useSelector(state => state.auth)
 
   const handleLogout = async (event) => {
-    dispatch(logoutUser())
+    dispatch(removeAuth())
     dispatch(notifySuccess('Logged out'))
   }
 
-  return (user &&
+  return (auth &&
     <>
-      <b>{user.name}</b> logged in
+      <b>{auth.name}</b> logged in
       <button onClick={handleLogout}>logout</button>
     </>
   )

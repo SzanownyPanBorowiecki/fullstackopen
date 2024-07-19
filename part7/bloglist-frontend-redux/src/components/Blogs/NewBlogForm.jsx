@@ -1,45 +1,29 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { createBlog } from '#reducers/blogsReducer'
-import { notifyError, notifySuccess } from '#reducers/notificationReducer'
+//import { createBlog } from '#reducers/blogsReducer'
+// import { notifyError, notifySuccess } from '#reducers/notificationReducer'
 
-const NewBlogForm = ({parentTogglableRef}) => {
+const NewBlogForm = ({
+  handleCreateNewBlog,
+  isAddBlogPending
+}) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  const dispatch = useDispatch()
-
-  const handleCreateNewBlog = async blog => {
-    try {
-      await dispatch(createBlog(blog))
-      dispatch(notifySuccess(
-          `a new blog ${blog.title} by ${blog.author} added`
-      ))
-      if (parentTogglableRef) {
-        parentTogglableRef.current.setVisible(false)
-      }
-
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-
-    } catch (e) {
-      dispatch(notifyError(
-        e.response?.data?.error
-          ? e.response.data.error
-          : e.message
-      ))
-    }
-  }
-
+  // const dispatch = useDispatch()
 
   return (
     <div>
       <h2>create new blog</h2>
-      <form onSubmit={(event) => {
+      <form onSubmit={async (event) => {
         event.preventDefault()
-        handleCreateNewBlog({ title, author, url })
+        const success = await handleCreateNewBlog({ title, author, url })
+        if (success) {
+          setTitle('')
+          setAuthor('')
+          setUrl('')
+        }
       }}>
         <div>
           title: <input
@@ -65,7 +49,11 @@ const NewBlogForm = ({parentTogglableRef}) => {
             value={url}
             onChange={({ target }) => setUrl(target.value)} />
         </div>
-        <button type="submit">Create</button>
+        <div>
+        { isAddBlogPending
+          ? 'Adding blog...'
+          : <button type="submit">Create</button> }
+        </div>
       </form>
     </div>
   )

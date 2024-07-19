@@ -1,41 +1,74 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
-import { loginUser } from '#reducers/userReducer'
+import { storeAuth } from '#reducers/authReducer'
+import { useLoginMutation } from '#services/auth'
+
 import { notifySuccess, notifyError } from '#reducers/notificationReducer'
 
 const LoginForm = () => {
   const loginRef = useRef()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
+  const [authenticate, authResult] = useLoginMutation()
+  const {
+    data: auth,
+    isLoading, isSuccess, isError, error
+  } = authResult
+  const storedAuth = useSelector(state => state.auth)
   const dispatch = useDispatch()
 
-  const handleLogin = async credentials => {
-    try {
-      const user = await dispatch(loginUser(credentials))
-      dispatch(notifySuccess(`Welcome ${user.name}`))
-    } catch (e) {
-      dispatch(notifyError(
-        e.response?.data?.error
-          ? e.response.data.error
-          : e.message
-      ))
+  useEffect(() => {
+    if ( isError ) {
+      dispatch(storeAuth(auth))
+      dispatch(notifyError(`Auth error: ${error.data?.error ?? error.status}`))
+    } else if ( isSuccess ) {
+      dispatch(notifySuccess(`Welcome ${auth.name}!`))
     }
-  }
+  }, [authResult])
 
-  const user = useSelector(state => state.user)
-  if (user !== null) {
+  //dispatch( loadAuth )
+
+  // const handleLogin = async credentials => {
+  //   try {
+  //     const auth = await .unwrap()
+  //     //console.log('auth: ', auth)
+  //     //dispatch(storeAuth(auth))
+  //     //dispatch(notifySuccess(`Welcome ${auth.name}!`))
+  //   } catch (error) {
+  //     dispatch(notifyError(`Error: ${error}`))
+  //   }
+  // }
+
+
+  if (storedAuth) {
     return <Navigate replace to="/" />
   }
+
+  if ( isLoading ) {
+    return <p>Logging in...</p>
+  // } else if ( isError ) {
+    // return <p>Auth error: {error.data?.error ?? error.status}</p>
+  } else if ( isSuccess ) {
+    dispatch(storeAuth(auth))
+    //dispatch(notifySuccess('hello'))
+    return <Navigate replace to="/" />
+  }
+   // const { data: auth } = authResult
+   // dispatch(storeAuth)
+ // }
+
+  // if (auth !== null) {
+  //   return <Navigate replace to="/" />
+  // }
 
   return (
     <div>
       <h2>Log in to application</h2>
       <form onSubmit={(event) => {
         event.preventDefault()
-        handleLogin({ username, password })
+        authenticate({ username, password })
         setUsername('')
         setPassword('')
         loginRef.current?.focus()

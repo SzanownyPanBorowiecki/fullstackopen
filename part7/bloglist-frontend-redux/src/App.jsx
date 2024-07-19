@@ -11,51 +11,38 @@ import LoginScreen from '#screens/Login'
 import Notification from '#components/Notification'
 import LoggedInUserInfo from '#components/LoggedInUserInfo'
 
-import { initializeUser } from '#reducers/userReducer'
-import { initializeBlogs } from '#reducers/blogsReducer'
-import { initializeUsers } from '#reducers/usersReducer'
+import { initializeAuth } from '#reducers/authReducer'
 
 const ProtectedRoute = ({ children }) => {
-  const [userInitialized, setUserInitialized] = useState(false)
-  const dispatch = useDispatch()
-
-  const user = useSelector(state => state.user)
-  useEffect(() => {
-    dispatch(initializeUser())
-    setUserInitialized(true)
-  }, [])
-
-  if (!userInitialized) return null
-  if (!user) return <Navigate to="/login" />
+  const auth = useSelector(state => state.auth)
+  if (!auth) return <Navigate to="/login" />
   return children
 }
 
 const App = () => {
+  const [authInitialized, setAuthInitialized] = useState(false)
   const dispatch = useDispatch()
-
+  const auth = useSelector(state => state.auth)
   const notification = useSelector(state => state.notification)
-  const user = useSelector(state => state.user)
 
   useEffect(() => {
-    const loadData = async () => {
-      dispatch(initializeUsers())
-      dispatch(initializeBlogs())
-    }
+    dispatch(initializeAuth())
+    setAuthInitialized(true)
+  }, [])
 
-    if (user) {
-      loadData()
-    }
-  }, [user])
+  if (!authInitialized) return null
+
 
   return (
     <div>
       <h2>blogs</h2>
       <Notification notification={notification} />
-      <div>
-        <Link to="/blogs">Blogs</Link>
-        <Link to="/users">Users</Link>
-        {user && <LoggedInUserInfo />}
-      </div>
+      { auth &&
+        <div>
+          <Link to="/blogs">Blogs</Link>
+          <Link to="/users">Users</Link>
+          <LoggedInUserInfo />
+        </div> }
       <Routes>
         <Route path="/" element={<Navigate to="/blogs" />} />
         <Route path="/blogs" element={<ProtectedRoute><BlogsScreen /></ProtectedRoute>} />

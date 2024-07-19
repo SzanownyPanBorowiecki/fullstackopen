@@ -1,53 +1,66 @@
-import axios from 'axios'
-const baseUrl = '/api/blogs'
+import { baseApi } from '#services/baseApi'
 
-let token = null
+const blogsApi = baseApi.injectEndpoints({
+  endpoints: builder => ({
 
-const setToken = newToken => {
-  token = `Bearer ${newToken}`
-}
+    getAllBlogs: builder.query({
+      query: () => '/blogs',
+      providesTags: (result = [], error, arg) => [
+        'Blogs',
+        ...result.map(({ id }) => ({ type: 'Blogs', id }))
+      ]
+    }),
 
-const getAll = async () => {
-  const response = await axios.get(baseUrl)
-  return response.data
-}
+    getBlogById: builder.query({
+      query: blogId => `/blogs/${blogId}`,
+      providesTags: (result, error, arg) =>
+        [{ type: 'Blogs', id: arg }]
+    }),
 
-const create = async blog => {
-  const config = {
-    headers: { Authorization: token },
-  }
-  const response = await axios.post(baseUrl, blog, config)
-  return response.data
-}
+    addBlog: builder.mutation({
+      query: blog => ({
+        url: '/blogs',
+        method: 'POST',
+        body: blog
+      }),
+      invalidatesTags: ['Blogs']
+    }),
 
-const update = async blog => {
-  const config = {
-    headers: { Authorization: token }
-  }
-  const response = await axios.put(`${baseUrl}/${blog.id}`, blog, config)
-  return response.data
-}
+    removeBlog: builder.mutation({
+      query: blogId => ({
+        url: `/blogs/${blogId}`,
+        method: 'DELETE'
+      }),
+      invalidatesTags: ['Blogs']
+    }),
 
-const remove = async id => {
-  const config = {
-    headers: { Authorization: token }
-  }
-  await axios.delete(`${baseUrl}/${id}`, config)
-}
+    updateBlog: builder.mutation({
+      query: blog => ({
+        url: `/blogs/${blog.id}`,
+        method: 'PUT',
+        body: blog
+      }),
+      invalidatesTags: (result, error, arg) =>
+        [{ type: 'Blogs', id: arg.id }]
+    }),
 
-const createComment = async (id, content) => {
-  const config = {
-    headers: { Authorization: token }
-  }
-  const response = await axios.post(`${baseUrl}/${id}/comment`, content, config)
-  return response.data
-}
+    likeBlog: builder.mutation({
+      query: blogId => ({
+        url: `/blogs/${blogId}/likes`,
+        method: 'POST'
+      }),
+      invalidatesTags: (result, error, arg) =>
+        [{ type: 'Blogs', id: arg }]
+    }),
 
-export default {
-  getAll,
-  create,
-  createComment,
-  update,
-  remove,
-  setToken
-}
+  })
+})
+
+export const {
+  useGetAllBlogsQuery,
+  useGetBlogByIdQuery,
+  useAddBlogMutation,
+  useRemoveBlogMutation,
+  useUpdateBlogMutation,
+  useLikeBlogMutation
+} = blogsApi

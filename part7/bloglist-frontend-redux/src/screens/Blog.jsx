@@ -1,76 +1,89 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
-import { likeBlog, removeBlog, createComment } from '#reducers/blogsReducer'
+
 import { notifyError, notifySuccess } from '#reducers/notificationReducer'
+
+import {
+  useGetBlogByIdQuery,
+  useLikeBlogMutation,
+  useRemoveBlogMutation
+} from '#services/blogs'
+import {
+  useGetCommentsByBlogIdQuery,
+  useAddCommentToBlogIdMutation
+} from '#services/comments'
 
 import BlogDetails from '#components/Blogs/BlogDetails'
 
 const Blog = () => {
   const blogId = useParams().id
+  const blogQuery = useGetBlogByIdQuery(blogId)
+  const commentsQuery = useGetCommentsByBlogIdQuery(blogId)
+  const [likeBlog, likeBlogResult] = useLikeBlogMutation()
+  const [removeBlog, removeBlogResult ] = useRemoveBlogMutation()
+  const [addComment, addCommentResult] = useAddCommentToBlogIdMutation()
 
-  const blog = useSelector(state =>
-    state.blogs.find(el => el.id === blogId)
-  )
-  const user = useSelector(state => state.user)
   const dispatch = useDispatch()
 
-  const handleLike = async blog => {
+  const auth = useSelector(state => state.auth)
+
+  if (blogQuery.isLoading) return <div>Loading blog...</div>
+
+  const blog = blogQuery.data
+
+  const handleLike = async () => {
     try {
-      await dispatch(likeBlog(blog))
-      dispatch(notifySuccess(
-        `You now like blog ${blog.title} by ${blog.author}`
-      ))
-    } catch (e) {
-      dispatch(notifyError(
-        e.response?.data?.error
-          ? e.response.data.error
-          : e.message
-      ))
+      await likeBlog(blogId)
+      dispatch(
+        notifySuccess(`You now like blog ${blog.title} by ${blog.author}`)
+      )
+    } catch (error) {
+      dispatch(
+        notifyError(error.data?.error ?? `Error ${error.status}`)
+      )
     }
   }
 
-  const handleRemove = async blog => {
+
+  const handleRemove = async () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       try {
-        await dispatch(removeBlog(blog))
-        dispatch(notifySuccess(
-          `Blog ${blog.title} by ${blog.author} has been removed`
-        ))
-        navigate('/')
-      } catch (e) {
-        dispatch(notifyError(
-          e.response?.data?.error
-            ? e.response.data.error
-            : e.message
-        ))
+        await removeBlog(blogId)
+        dispatch(
+          notifySuccess(`Blog ${blog.title} by ${blog.author} has been removed`)
+        )
+      } catch (error) {
+        console.log(error)
+        dispatch(
+          notifyError(error.data?.error ?? `Error ${error.status}`)
+        )
       }
     }
   }
 
-  const handleAddComment = async (event) => {
+  const handleAddComment = async event => {
     event.preventDefault()
-    console.log(event.target.comment.value)
+    const content = event.target.comment.value
     try {
-      await dispatch(createComment(blog, event.target.comment.value))
-      dispatch(notifySuccess('Added comment'))
-    } catch(e) {
-      dispatch(notifyError(
-        e.response?.data?.error
-          ? e.response.data.error
-          : e.message
-      ))
+      await addComment({ blogId, content })
+      dispatch(
+        notifySuccess(`Comment '${content}' saved`)
+      )
+    } catch (error) {
+      console.log(error)
+      dispatch(
+        notifyError(error.data?.error ?? `Error ${error.status}`)
+      )
     }
   }
-
 
   if (!blog) {
     return <div>Blog not found!</div>
   }
 
-  const removeButtonVisible = user.username === blog.user?.username
+  const removeButtonVisible = auth.username === blog.user?.username
   //const showRemoveButtonWhenVisible = { display: removeButtonVisible ? '' : 'none' }
-
   return (
     <div>
       <BlogDetails
@@ -78,15 +91,31 @@ const Blog = () => {
         removeButtonVisible={removeButtonVisible}
         handleRemove={handleRemove}
         handleLike={handleLike}
+        isLikePending={likeBlogResult.isLoading}
+        isRemovePending={removeBlogResult.isLoading}
       />
       <h4>comments</h4>
       <form onSubmit={handleAddComment}>
         <input name="comment" />
-        <button>add comment</button>
+        { addCommentResult.isLoading
+          ? <>Adding comment...</>
+          : <button>add comment</button> }
       </form>
-      <ul>
+      {commentsQuery.isLoading
+        ? <p>Loading comments...</p>
+        : commentsQuery.isError
+          ? <p>Error loading comments!</p>
+          : <ul>
+              {[...commentsQuery.data]
+                .reverse()
+                .map(comment =>
+                  <li key={comment.id}>{comment.content}</li>
+                )}
+            </ul>
+      }
+{/*      <ul>
         {blog.comments?.map(comment => <li>{comment}</li>)}
-      </ul>
+      </ul>*/}
     </div>
 
   )

@@ -20,16 +20,34 @@ const blogSchema = new mongoose.Schema({
     required: true
   },
   comments: [{
-    type: String
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment',
+    select: false
   }]
 })
 
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
+    delete returnedObject.comments
     delete returnedObject._id
     delete returnedObject.__v
   }
 })
+
+// On deleting blog
+// - remove linked comments
+// - remove blog id from users blogs
+const Comment = require('./comment')
+const User = require('./user')
+blogSchema.post('remove', (doc) => {
+  Comment.remove({ _id: { $in: doc.comments } })
+  User.updateOne(
+    { _id: doc.user },
+    { $pull: { blogs: doc._id } }
+  )
+})
+
+
 
 module.exports = mongoose.model('Blog', blogSchema, 'blogs')

@@ -1,6 +1,12 @@
-const BlogDetails = ({blog, removeButtonVisible, handleRemove, handleLike}) => {
-  const showRemoveButtonWhenVisible = { display: removeButtonVisible ? '' : 'none' }
-
+const BlogDetails = ({
+  blog,
+  removeButtonVisible,
+  handleRemove,
+  handleLike,
+  isLikePending,
+  isRemovePending
+}) => {
+  //const showRemoveButtonWhenVisible = { display: removeButtonVisible ? '' : 'none' }
   return (
     <div className='blog-entry'>
       <div className='blog-header'>
@@ -9,13 +15,22 @@ const BlogDetails = ({blog, removeButtonVisible, handleRemove, handleLike}) => {
 
       <div className='blog-details'>
         <div><a href={blog.url}>{blog.url}</a></div>
-        <div>{blog.likes} likes <button onClick={() => handleLike(blog)}>like</button></div>
-        <div>added by {blog.user?.name}</div>
         <div>
-          <button className='remove-button' style={showRemoveButtonWhenVisible} onClick={() => handleRemove(blog)}>
-            remove
-          </button>
+          {blog.likes} likes
+          { isLikePending
+            ? <p>Wait...</p>
+            : <button onClick={() => handleLike(blog)}>like</button>
+          }
         </div>
+        <div>added by {blog.user?.name}</div>
+        { removeButtonVisible &&
+          <div>
+            { isRemovePending
+              ? <>Removing blog...</>
+              : <button className='remove-button' onClick={() => handleRemove(blog)}>
+                  remove
+                </button> }
+          </div> }
       </div>
     </div>
   )
