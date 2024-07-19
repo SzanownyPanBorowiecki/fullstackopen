@@ -1,28 +1,34 @@
-import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { initializeUsers } from '#reducers/usersReducer'
+import {
+  useGetUserByIdQuery,
+  useGetBlogsByUserIdQuery
+} from '#services/users'
+
+//import { useGetBlogByIdQuery } from '#services/blogs'
 
 import UserDetails from '#components/Users/UserDetails'
+import BlogList from '#components/Blogs/BlogList'
+
 
 const User = () => {
-  const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(initializeUsers())
-  }, [])
-
   const userId = useParams().id
+  const { data: user, isLoading: isUserLoading } = useGetUserByIdQuery(userId)
+  const { data: blogs, isLoading: isBlogsLoading } = useGetBlogsByUserIdQuery(userId)
 
-  const user = useSelector(state =>
-    state.users.find(el => el.id === userId)
-  )
+  if ( isUserLoading ) return <p>Loading...</p>
 
   if (!user) {
     return <div>User not found!</div>
   }
 
-  return <UserDetails user={user} />
+  return (
+    <>
+      <UserDetails user={user} />
+      <h4>Blogs added by user:</h4>
+      { isBlogsLoading ? <p>Loading list of blogs...</p> : <BlogList blogs={blogs} /> }
+    </>
+  )
 }
 
 export default User

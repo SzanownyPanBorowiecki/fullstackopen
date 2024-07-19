@@ -1,11 +1,17 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { initializeUsers } from '#reducers/usersReducer'
+import {
+  useGetAllUsersQuery,
+} from '#services/users'
 
 import UserList from '#components/Users/UserList'
 
 const Users = () => {
-  const users = useSelector(state => state.users)
+  const getAllUsersQuery = useGetAllUsersQuery()
+  const { data: users } = getAllUsersQuery
+  console.log('query: ', getAllUsersQuery)
+  console.log(users)
+  if (getAllUsersQuery.isLoading) return <p>Loading users...</p>
+
+  console.log('users:', users)
 
   return (users &&
     <div>

@@ -1,0 +1,13 @@
+### Get all users
+GET http://localhost:3003/api/users
+
+
+### POST new user
+POST http://localhost:3003/api/users HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "test",
+    "name": "Hello World",
+    "password": "test1"
+}

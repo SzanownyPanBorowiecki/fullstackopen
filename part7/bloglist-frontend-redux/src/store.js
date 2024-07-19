@@ -1,14 +1,20 @@
 import { configureStore } from '@reduxjs/toolkit'
-import blogsReducer from './reducers/blogsReducer'
-import notificationReducer from './reducers/notificationReducer'
-import userReducer from './reducers/userReducer'
-import usersReducer from './reducers/usersReducer'
+
+import { baseApi } from '#services/baseApi'
+
+import notificationReducer from '#reducers/notificationReducer'
+import authReducer from '#reducers/authReducer'
+
 
 export const store = configureStore({
   reducer: {
-    user: userReducer,
+    auth: authReducer,
     notification: notificationReducer,
-    blogs: blogsReducer,
-    users: usersReducer,
-  }
+    [baseApi.reducerPath]: baseApi.reducer
+  },
+
+  middleware: (getDefaultMiddleware) => [
+    ...getDefaultMiddleware(),
+    baseApi.middleware
+  ]
 })
