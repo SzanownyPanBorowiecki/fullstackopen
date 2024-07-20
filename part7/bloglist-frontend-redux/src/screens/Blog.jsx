@@ -15,6 +15,8 @@ import {
 } from '#services/comments'
 
 import BlogDetails from '#components/Blogs/BlogDetails'
+import CommentsList from '#components/Blogs/CommentsList'
+import NewCommentForm from '#components/Blogs/NewCommentForm'
 
 const Blog = () => {
   const blogId = useParams().id
@@ -28,13 +30,15 @@ const Blog = () => {
 
   const auth = useSelector(state => state.auth)
 
-  if (blogQuery.isLoading) return <div>Loading blog...</div>
-
+  // if (blogQuery.isLoading) return <div>Loading blog...</div>
+  if (blogQuery.isError && blogQuery.error.status === 404) {
+    return <div>Blog not found!</div>
+  }
   const blog = blogQuery.data
 
   const handleLike = async () => {
     try {
-      await likeBlog(blogId)
+      await likeBlog(blogId).unwrap()
       dispatch(
         notifySuccess(`You now like blog ${blog.title} by ${blog.author}`)
       )
@@ -66,7 +70,7 @@ const Blog = () => {
     event.preventDefault()
     const content = event.target.comment.value
     try {
-      await addComment({ blogId, content })
+      await addComment({ blogId, content }).unwrap()
       dispatch(
         notifySuccess(`Comment '${content}' saved`)
       )
@@ -78,11 +82,8 @@ const Blog = () => {
     }
   }
 
-  if (!blog) {
-    return <div>Blog not found!</div>
-  }
-
-  const removeButtonVisible = auth.username === blog.user?.username
+  const removeButtonVisible = auth.username === blog?.user?.username
+  console.log(commentsQuery)
   //const showRemoveButtonWhenVisible = { display: removeButtonVisible ? '' : 'none' }
   return (
     <div>
@@ -91,31 +92,16 @@ const Blog = () => {
         removeButtonVisible={removeButtonVisible}
         handleRemove={handleRemove}
         handleLike={handleLike}
+        isLoading={blogQuery.isLoading}
         isLikePending={likeBlogResult.isLoading}
         isRemovePending={removeBlogResult.isLoading}
       />
       <h4>comments</h4>
-      <form onSubmit={handleAddComment}>
-        <input name="comment" />
-        { addCommentResult.isLoading
-          ? <>Adding comment...</>
-          : <button>add comment</button> }
-      </form>
-      {commentsQuery.isLoading
-        ? <p>Loading comments...</p>
-        : commentsQuery.isError
-          ? <p>Error loading comments!</p>
-          : <ul>
-              {[...commentsQuery.data]
-                .reverse()
-                .map(comment =>
-                  <li key={comment.id}>{comment.content}</li>
-                )}
-            </ul>
-      }
-{/*      <ul>
-        {blog.comments?.map(comment => <li>{comment}</li>)}
-      </ul>*/}
+      <NewCommentForm
+        isAddCommentPending={addCommentResult.isLoading}
+        handleAddComment={handleAddComment}
+      />
+      <CommentsList comments={commentsQuery.data} isLoading={commentsQuery.isLoading} isError={commentsQuery.isError} />
     </div>
 
   )

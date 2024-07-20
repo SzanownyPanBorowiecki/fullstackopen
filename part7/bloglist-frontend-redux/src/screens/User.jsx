@@ -16,17 +16,12 @@ const User = () => {
   const { data: user, isLoading: isUserLoading } = useGetUserByIdQuery(userId)
   const { data: blogs, isLoading: isBlogsLoading } = useGetBlogsByUserIdQuery(userId)
 
-  if ( isUserLoading ) return <p>Loading...</p>
-
-  if (!user) {
-    return <div>User not found!</div>
-  }
 
   return (
     <>
-      <UserDetails user={user} />
+      <UserDetails user={user} isLoading={isUserLoading}/>
       <h4>Blogs added by user:</h4>
-      { isBlogsLoading ? <p>Loading list of blogs...</p> : <BlogList blogs={blogs} /> }
+      <BlogList blogs={blogs} isLoading={isBlogsLoading} />
     </>
   )
 }

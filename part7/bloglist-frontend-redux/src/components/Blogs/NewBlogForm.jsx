@@ -1,8 +1,5 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-
-//import { createBlog } from '#reducers/blogsReducer'
-// import { notifyError, notifySuccess } from '#reducers/notificationReducer'
+import { Form, Row, Col, Button, Spinner } from 'react-bootstrap'
 
 const NewBlogForm = ({
   handleCreateNewBlog,
@@ -11,12 +8,11 @@ const NewBlogForm = ({
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  // const dispatch = useDispatch()
 
   return (
     <div>
       <h2>create new blog</h2>
-      <form onSubmit={async (event) => {
+      <Form onSubmit={async (event) => {
         event.preventDefault()
         const success = await handleCreateNewBlog({ title, author, url })
         if (success) {
@@ -25,36 +21,43 @@ const NewBlogForm = ({
           setUrl('')
         }
       }}>
-        <div>
-          title: <input
-            data-testid='NewBlogForm:input:title'
-            id='input-title'
-            type="text"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)} />
-        </div>
-        <div>
-          author: <input
-            data-testid='NewBlogForm:input:author'
-            id='input-author'
-            type="text"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)} />
-        </div>
-        <div>
-          url: <input
-            data-testid='NewBlogForm:input:url'
-            id='input-url'
-            type="text"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)} />
-        </div>
-        <div>
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm="2">
+            Title
+          </Form.Label>
+          <Col sm="10">
+            <Form.Control type="text" />
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm="2">
+            Author
+          </Form.Label>
+          <Col sm="10">
+            <Form.Control type="text" />
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm="2">
+            URL
+          </Form.Label>
+          <Col sm="10">
+            <Form.Control type="text" />
+          </Col>
+        </Form.Group>
         { isAddBlogPending
-          ? 'Adding blog...'
-          : <button type="submit">Create</button> }
-        </div>
-      </form>
+          ? <Button variant="primary" disabled>
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+              />
+              Creating...
+            </Button>
+          : <Button variant="primary" type="submit">Create</Button> }
+      </Form>
     </div>
   )
 }

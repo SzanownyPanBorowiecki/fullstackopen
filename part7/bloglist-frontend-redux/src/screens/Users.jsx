@@ -5,18 +5,12 @@ import {
 import UserList from '#components/Users/UserList'
 
 const Users = () => {
-  const getAllUsersQuery = useGetAllUsersQuery()
-  const { data: users } = getAllUsersQuery
-  console.log('query: ', getAllUsersQuery)
-  console.log(users)
-  if (getAllUsersQuery.isLoading) return <p>Loading users...</p>
+  const { data: users, isLoading } = useGetAllUsersQuery()
 
-  console.log('users:', users)
-
-  return (users &&
+  return (
     <div>
       <h2>Users</h2>
-      <UserList users={users} />
+      <UserList users={users} isLoading={isLoading} />
     </div>
   )
 }

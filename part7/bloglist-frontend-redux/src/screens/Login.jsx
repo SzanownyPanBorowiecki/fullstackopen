@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
+import { Form, Button } from 'react-bootstrap'
+
 
 import { storeAuth } from '#reducers/authReducer'
 import { useLoginMutation } from '#services/auth'
@@ -28,19 +30,6 @@ const LoginForm = () => {
     }
   }, [authResult])
 
-  //dispatch( loadAuth )
-
-  // const handleLogin = async credentials => {
-  //   try {
-  //     const auth = await .unwrap()
-  //     //console.log('auth: ', auth)
-  //     //dispatch(storeAuth(auth))
-  //     //dispatch(notifySuccess(`Welcome ${auth.name}!`))
-  //   } catch (error) {
-  //     dispatch(notifyError(`Error: ${error}`))
-  //   }
-  // }
-
 
   if (storedAuth) {
     return <Navigate replace to="/" />
@@ -48,20 +37,10 @@ const LoginForm = () => {
 
   if ( isLoading ) {
     return <p>Logging in...</p>
-  // } else if ( isError ) {
-    // return <p>Auth error: {error.data?.error ?? error.status}</p>
   } else if ( isSuccess ) {
     dispatch(storeAuth(auth))
-    //dispatch(notifySuccess('hello'))
     return <Navigate replace to="/" />
   }
-   // const { data: auth } = authResult
-   // dispatch(storeAuth)
- // }
-
-  // if (auth !== null) {
-  //   return <Navigate replace to="/" />
-  // }
 
   return (
     <div>

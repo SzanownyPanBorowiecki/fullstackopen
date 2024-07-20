@@ -17,14 +17,14 @@ const Blogs = () => {
   // should initialize blogs here
 
   //const blogs = useSelector(state => state.blogs)
-  const { data, error, isLoading } = useGetAllBlogsQuery()
+  const { data: blogs, isError, isLoading } = useGetAllBlogsQuery()
   const [addBlog, addBlogResult] = useAddBlogMutation()
 
   const newBlogFormTogglableRef = useRef()
 
   const handleCreateNewBlog = async blog => {
     try {
-      await addBlog(blog)
+      await addBlog(blog).unwrap()
       dispatch(
         notifySuccess(`a new blog ${blog.title} by ${blog.author} added`)
       )
@@ -37,16 +37,18 @@ const Blogs = () => {
     }
   }
 
-  if (error) {
-    return <div>Error: {error}</div>
-  }
+  // if (error) {
+  //   return <div>Error: {error}</div>
+  // }
 
-  if ( isLoading ) {
-    return <div>Loading blogs...</div>
-  }
+  // if ( isLoading ) {
+  //   return <div>Loading blogs...</div>
+  // }
 
   return (
     <div>
+      <h2>Blogs</h2>
+
       <Togglable
         buttonLabel="create new"
         ref={newBlogFormTogglableRef}
@@ -57,7 +59,12 @@ const Blogs = () => {
           isAddBlogPending={addBlogResult.isLoading}
         />
       </Togglable>
-      <BlogList blogs={data} />
+
+      <BlogList
+        blogs={blogs}
+        isLoading={isLoading}
+        isError={isError}
+      />
     </div>
   )
 }
