@@ -37,14 +37,6 @@ const Blogs = () => {
     }
   }
 
-  // if (error) {
-  //   return <div>Error: {error}</div>
-  // }
-
-  // if ( isLoading ) {
-  //   return <div>Loading blogs...</div>
-  // }
-
   return (
     <div>
       <h2>Blogs</h2>

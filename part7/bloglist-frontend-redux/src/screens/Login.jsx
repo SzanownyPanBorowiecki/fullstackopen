@@ -37,13 +37,6 @@ const LoginForm = () => {
     return <Navigate replace to="/" />
   }
 
-  // if ( isLoading ) {
-  //   return <p>Logging in...</p>
-  // } else if ( isSuccess ) {
-  //   dispatch(storeAuth(auth))
-  //   //return <Navigate replace to="/" />
-  // }
-
   const handleLogin = (event) => {
     event.preventDefault()
     authenticate({ username, password })
@@ -83,33 +76,6 @@ const LoginForm = () => {
           </Button>
         : <Button variant="primary" type="submit">Log In</Button> }
     </Form>
-    // <div>
-    //   <h2>Log in to application</h2>
-    //   <form onSubmit={(event) => {
-    //     event.preventDefault()
-    //     authenticate({ username, password })
-    //     setUsername('')
-    //     setPassword('')
-    //     loginRef.current?.focus()
-    //   }}>
-    //     <div>
-    //       username: <input
-    //         autoFocus
-    //         data-testid="LoginForm:input:username"
-    //         ref={loginRef}
-    //         type="text"
-    //         value={username}
-    //         onChange={({ target }) => setUsername(target.value)} />
-    //     </div>
-    //     <div>
-    //       password: <input
-    //         data-testid="LoginForm:input:password"
-    //         type="password"
-    //         value={password}
-    //         onChange={({ target }) => setPassword(target.value)} />
-    //     </div>
-    //     <button data-testid="LoginForm:button:login" type="submit">Login</button>
-    //   </form>
   )
 }
 
