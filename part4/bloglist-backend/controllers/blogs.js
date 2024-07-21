@@ -27,15 +27,6 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 })
 
 blogsRouter.put('/:id', userExtractor, async (request, response) => {
-  const blog = await Blog.findById(request.params.id)
-  if (!blog) {
-    return response.status(404)
-  }
-
-  //if (blog.user.toString() !== request.user.id) {
-  //  return response.status(401).json({ error: 'modification of another user\'s blog not permitted' })
-  //}
-
   const result = await Blog
     .findByIdAndUpdate(
       request.params.id,
@@ -44,6 +35,18 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
     )
     .populate('user', { username: 1, name: 1 })
 
+  if (!result) return response.status(404)
+
+  response.json(result)
+})
+
+blogsRouter.post('/:id/comment', userExtractor, async (request, response) => {
+  const content = request.body.content
+  const result = await Blog.findByIdAndUpdate(
+    request.params.id,
+    { $push: { comments: content } },
+    { new: true, runValidators: true, context: 'query' }
+  )
   if (!result) return response.status(404)
 
   response.json(result)
@@ -69,6 +72,7 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 
   response.status(204).send()
 })
+
 
 
 module.exports = blogsRouter

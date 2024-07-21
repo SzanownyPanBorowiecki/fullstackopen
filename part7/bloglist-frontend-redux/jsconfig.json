@@ -1,0 +1,24 @@
+{
+    "compilerOptions":
+    {
+        "paths":
+        {
+            "#components/*":
+            [
+                "./src/components/*"
+            ],
+            "#reducers/*":
+            [
+                "./src/reducers/*"
+            ],
+            "#services/*":
+            [
+                "./src/services/*"
+            ],
+            "#screens/*":
+            [
+                "./src/screens/*"
+            ]
+        }
+    }
+}
