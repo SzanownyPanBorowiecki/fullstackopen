@@ -31,8 +31,8 @@ const App = () => {
   const location = useLocation()
 
   useEffect(() => {
-    dispatch(initializeAuth())
-    setAuthInitialized(true)
+   dispatch(initializeAuth())
+   setAuthInitialized(true)
   }, [])
 
   const handleLogout = async (event) => {
@@ -47,7 +47,7 @@ const App = () => {
   return (
     <div className="container">
       { auth &&
-        <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
+        <Navbar collapseOnSelect expand="lg">
           <Navbar.Brand>Bloglist</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">

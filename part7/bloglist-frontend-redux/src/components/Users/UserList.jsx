@@ -6,14 +6,18 @@ import {
 
 const UserList = ({ users, isLoading }) => {
   const navigate = useNavigate()
-  if ( isLoading ) return (
-    <Spinner animation="border" role="status">
-      <span className="visually-hidden">Loading...</span>
-    </Spinner>
-  )
 
-  return (users &&
-    <Table stripped bordered hover>
+  if ( isLoading ) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    )
+  }
+
+
+  return (
+    <Table bordered hover>
       <thead>
         <tr>
           <td>Name</td>

@@ -18,7 +18,9 @@ blogsRouter.get('/:id', async (request,response) => {
   const blog = await Blog
     .findById(request.params.id)
     .populate('user', { username: 1, name: 1 })
-  console.log('populated:', blog)
+  if (!blog) {
+    return response.status(404).send()
+  }
   response.json(blog)
 })
 
@@ -65,7 +67,6 @@ blogsRouter.get('/:id/comments', userExtractor, async (request, response) => {
   const blog = await Blog
     .findById(request.params.id)
     .populate('comments', { createdAt: 1, content: 1 })
-  console.log(blog)
   response.json(blog.comments)
 })
 

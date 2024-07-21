@@ -9,24 +9,30 @@ const NewBlogForm = ({
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    const success = await handleCreateNewBlog({ title, author, url })
+    if (success) {
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+    }
+  }
+
   return (
     <div>
       <h2>create new blog</h2>
-      <Form onSubmit={async (event) => {
-        event.preventDefault()
-        const success = await handleCreateNewBlog({ title, author, url })
-        if (success) {
-          setTitle('')
-          setAuthor('')
-          setUrl('')
-        }
-      }}>
+      <Form onSubmit={handleSubmit}>
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm="2">
             Title
           </Form.Label>
           <Col sm="10">
-            <Form.Control type="text" />
+            <Form.Control
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
@@ -34,7 +40,11 @@ const NewBlogForm = ({
             Author
           </Form.Label>
           <Col sm="10">
-            <Form.Control type="text" />
+            <Form.Control
+              type="text"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+            />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
@@ -42,7 +52,11 @@ const NewBlogForm = ({
             URL
           </Form.Label>
           <Col sm="10">
-            <Form.Control type="text" />
+            <Form.Control
+              type="text"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+            />
           </Col>
         </Form.Group>
         { isAddBlogPending

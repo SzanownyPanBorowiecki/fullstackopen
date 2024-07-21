@@ -38,8 +38,11 @@ const BlogDetails = ({
             : <Button onClick={() => handleLike(blog)}>Like</Button>
           }
         </Card.Text>
+        <Card.Text>
+          Added by: {blog.user.name}
+        </Card.Text>
         <Button variant="primary">Go to {blog.url}</Button>
-        { removeButtonVisible &&
+        { removeButtonVisible && (
             isRemovePending
               ? <Button variant="danger" disabled>
                   <Spinner
@@ -53,7 +56,8 @@ const BlogDetails = ({
                 </Button>
               : <Button variant="danger" onClick={() => handleRemove(blog)}>
                   Remove
-                </Button> }
+                </Button>
+        )}
       </Card.Body>
     </Card>
 

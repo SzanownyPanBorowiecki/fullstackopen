@@ -40,12 +40,14 @@ blogSchema.set('toJSON', {
 // - remove blog id from users blogs
 const Comment = require('./comment')
 const User = require('./user')
-blogSchema.post('remove', (doc) => {
-  Comment.remove({ _id: { $in: doc.comments } })
-  User.updateOne(
-    { _id: doc.user },
-    { $pull: { blogs: doc._id } }
-  )
+blogSchema.pre('deleteOne', { document: true }, next => {
+  next()
+  //Comment.deleteMany({ _id: { $in: doc.comments } })
+  // User.updateOne(
+  //    { _id: doc.user },
+  //    { $pull: { blogs: doc._id } }
+  // )
+  // console.log(res)
 })
 
 

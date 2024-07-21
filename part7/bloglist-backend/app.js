@@ -19,6 +19,9 @@ app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json())
 
+// TEST ONLY: slow down
+app.use((req,res,next) => setTimeout(next,500))
+
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)

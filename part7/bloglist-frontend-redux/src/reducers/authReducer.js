@@ -16,8 +16,8 @@ export const {
 export const initializeAuth = () => {
   return dispatch => {
     const authJSON = window.localStorage.getItem('loggedBloglistUser')
-    const auth = JSON.parse(authJSON)
     if (authJSON) {
+      const auth = JSON.parse(authJSON)
       dispatch(setAuth(auth))
     }
   }

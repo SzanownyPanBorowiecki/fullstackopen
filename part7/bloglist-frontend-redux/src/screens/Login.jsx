@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
-import { Form, Button } from 'react-bootstrap'
+import { useNavigate, Navigate } from 'react-router-dom'
+import { Form, Button, Row, Col, Spinner } from 'react-bootstrap'
 
 
 import { storeAuth } from '#reducers/authReducer'
@@ -20,13 +20,15 @@ const LoginForm = () => {
   } = authResult
   const storedAuth = useSelector(state => state.auth)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if ( isError ) {
-      dispatch(storeAuth(auth))
       dispatch(notifyError(`Auth error: ${error.data?.error ?? error.status}`))
     } else if ( isSuccess ) {
+      dispatch(storeAuth(auth))
       dispatch(notifySuccess(`Welcome ${auth.name}!`))
+      navigate('/')
     }
   }, [authResult])
 
@@ -35,42 +37,79 @@ const LoginForm = () => {
     return <Navigate replace to="/" />
   }
 
-  if ( isLoading ) {
-    return <p>Logging in...</p>
-  } else if ( isSuccess ) {
-    dispatch(storeAuth(auth))
-    return <Navigate replace to="/" />
+  // if ( isLoading ) {
+  //   return <p>Logging in...</p>
+  // } else if ( isSuccess ) {
+  //   dispatch(storeAuth(auth))
+  //   //return <Navigate replace to="/" />
+  // }
+
+  const handleLogin = (event) => {
+    event.preventDefault()
+    authenticate({ username, password })
+    setUsername('')
+    setPassword('')
+    loginRef.current?.focus()
   }
 
   return (
-    <div>
-      <h2>Log in to application</h2>
-      <form onSubmit={(event) => {
-        event.preventDefault()
-        authenticate({ username, password })
-        setUsername('')
-        setPassword('')
-        loginRef.current?.focus()
-      }}>
-        <div>
-          username: <input
-            autoFocus
-            data-testid="LoginForm:input:username"
-            ref={loginRef}
-            type="text"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)} />
-        </div>
-        <div>
-          password: <input
-            data-testid="LoginForm:input:password"
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)} />
-        </div>
-        <button data-testid="LoginForm:button:login" type="submit">Login</button>
-      </form>
-    </div>
+    <Form onSubmit={handleLogin}>
+      <Form.Group as={Row} className="mb-3">
+        <Form.Label column sm="2">
+          Login
+        </Form.Label>
+        <Col sm="10">
+          <Form.Control ref={loginRef} type="text" onChange={({ target }) => setUsername(target.value)}/>
+        </Col>
+      </Form.Group>
+      <Form.Group as={Row} className="mb-3">
+        <Form.Label column sm="2">
+          Password
+        </Form.Label>
+        <Col sm="10">
+          <Form.Control type="password" onChange={({ target }) => setPassword(target.value)} />
+        </Col>
+      </Form.Group>
+      { isLoading
+        ? <Button variant="primary" disabled>
+            <Spinner
+              as="span"
+              animation="border"
+              size="sm"
+              role="status"
+              aria-hidden="true"
+            />
+            Logging in...
+          </Button>
+        : <Button variant="primary" type="submit">Log In</Button> }
+    </Form>
+    // <div>
+    //   <h2>Log in to application</h2>
+    //   <form onSubmit={(event) => {
+    //     event.preventDefault()
+    //     authenticate({ username, password })
+    //     setUsername('')
+    //     setPassword('')
+    //     loginRef.current?.focus()
+    //   }}>
+    //     <div>
+    //       username: <input
+    //         autoFocus
+    //         data-testid="LoginForm:input:username"
+    //         ref={loginRef}
+    //         type="text"
+    //         value={username}
+    //         onChange={({ target }) => setUsername(target.value)} />
+    //     </div>
+    //     <div>
+    //       password: <input
+    //         data-testid="LoginForm:input:password"
+    //         type="password"
+    //         value={password}
+    //         onChange={({ target }) => setPassword(target.value)} />
+    //     </div>
+    //     <button data-testid="LoginForm:button:login" type="submit">Login</button>
+    //   </form>
   )
 }
 

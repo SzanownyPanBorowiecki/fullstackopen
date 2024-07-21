@@ -1,4 +1,4 @@
-import { Spinner } from 'react-bootstrap'
+import { Container, Row, Col, Card, Spinner } from 'react-bootstrap'
 
 const CommentsList = ({
   comments,
@@ -11,13 +11,27 @@ const CommentsList = ({
   )
 
   return (
-    <ul>
-    { [...comments]
-      .reverse()
-      .map(comment =>
-        <li key={comment.id}>{comment.content}</li>
-      ) }
-    </ul>
+    <Container className="mt-4">
+      {
+        [...comments]
+          .reverse()
+          .map(comment =>
+            <Card
+              key={comment.id}
+              className="mb-4"
+            >
+              <Card.Body>
+                <Card.Text>
+                  {comment.content}
+                </Card.Text>
+                <Card.Text className="text-right small text-muted mb-0">
+                  Added on {comment.createdAt}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          )
+      }
+    </Container>
   )
 }
 

@@ -26,6 +26,7 @@ const Blog = () => {
   const [removeBlog, removeBlogResult ] = useRemoveBlogMutation()
   const [addComment, addCommentResult] = useAddCommentToBlogIdMutation()
 
+  const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const auth = useSelector(state => state.auth)
@@ -53,12 +54,12 @@ const Blog = () => {
   const handleRemove = async () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       try {
-        await removeBlog(blogId)
+        await removeBlog(blogId).unwrap()
         dispatch(
           notifySuccess(`Blog ${blog.title} by ${blog.author} has been removed`)
         )
+        navigate(-1)
       } catch (error) {
-        console.log(error)
         dispatch(
           notifyError(error.data?.error ?? `Error ${error.status}`)
         )
@@ -66,25 +67,23 @@ const Blog = () => {
     }
   }
 
-  const handleAddComment = async event => {
-    event.preventDefault()
-    const content = event.target.comment.value
+  const handleAddComment = async content => {
     try {
       await addComment({ blogId, content }).unwrap()
       dispatch(
         notifySuccess(`Comment '${content}' saved`)
       )
+      return true
     } catch (error) {
       console.log(error)
       dispatch(
         notifyError(error.data?.error ?? `Error ${error.status}`)
       )
+      return false
     }
   }
 
   const removeButtonVisible = auth.username === blog?.user?.username
-  console.log(commentsQuery)
-  //const showRemoveButtonWhenVisible = { display: removeButtonVisible ? '' : 'none' }
   return (
     <div>
       <BlogDetails
