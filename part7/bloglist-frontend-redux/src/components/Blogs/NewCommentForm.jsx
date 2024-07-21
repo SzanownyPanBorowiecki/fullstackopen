@@ -18,7 +18,12 @@ const NewCommentForm = ({
     <Form onSubmit={handleSubmit}>
       <Row className="align-items-center">
         <Col xs="auto">
-          <Form.Control type="text" placeholder="Your comment" value={content} onChange={(e) => setContent(e.target.value)}/>
+          <Form.Control
+            type="text"
+            placeholder="Your comment"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
         </Col>
         <Col>
         { isAddCommentPending

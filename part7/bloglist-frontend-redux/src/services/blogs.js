@@ -23,7 +23,7 @@ const blogsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: blog
       }),
-      invalidatesTags: ['Blogs']
+      invalidatesTags: ['Blogs', 'Users']
     }),
 
     removeBlog: builder.mutation({
@@ -31,7 +31,7 @@ const blogsApi = baseApi.injectEndpoints({
         url: `/blogs/${blogId}`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['Blogs']
+      invalidatesTags: ['Blogs', 'Users']
     }),
 
     updateBlog: builder.mutation({
