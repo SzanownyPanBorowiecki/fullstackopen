@@ -21,8 +21,7 @@ const blogSchema = new mongoose.Schema({
   },
   comments: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Comment',
-    select: false
+    ref: 'Comment'
   }]
 })
 
@@ -35,21 +34,25 @@ blogSchema.set('toJSON', {
   }
 })
 
-// On deleting blog
-// - remove linked comments
-// - remove blog id from users blogs
-const Comment = require('./comment')
-const User = require('./user')
-blogSchema.pre('deleteOne', { document: true }, next => {
-  next()
-  //Comment.deleteMany({ _id: { $in: doc.comments } })
-  // User.updateOne(
-  //    { _id: doc.user },
-  //    { $pull: { blogs: doc._id } }
-  // )
-  // console.log(res)
-})
+const User = require('../models/user')
+const Comment = require('../models/comment')
 
+blogSchema.pre(
+  'deleteOne',
+  { document: true, query: false },
+  function(){
+    // Remove blog reference from user
+    User.updateOne(
+      { _id: this.user },
+      { $pull: { blogs: this._id } }
+    ).exec()
+
+    // Delete all comments associated with this blog
+    Comment.deleteMany({
+      _id: { $in: this.comments }
+    }).exec()
+  }
+)
 
 
 module.exports = mongoose.model('Blog', blogSchema, 'blogs')

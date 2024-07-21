@@ -28,11 +28,15 @@ userSchema.set('toJSON', {
   }
 })
 
-// On deleting user
-// - remove linked blogs
-const Blog = require('./blog')
-userSchema.post('remove', (doc) => {
-  Blog.remove({ _id: { $in: doc.blogs } })
-})
+userSchema.pre(
+  'deleteOne',
+  { document: true, query: false },
+  function(next){
+    // Delete all blogs associated with this user
+    this.model('Blog').deleteMany({ user: this._id }).exec()
+
+    next()
+  }
+)
 
 module.exports = mongoose.model('User', userSchema, 'users')
