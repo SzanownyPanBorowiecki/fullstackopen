@@ -10,6 +10,7 @@ const parseArguments = (args: string[]): Params => {
   const exerciseHours = args.slice(3).map(Number);
   if (exerciseHours.some(isNaN) || isNaN(target)) {
     throw new Error('Provided values were not numbers!');
+  }
 
   return { exerciseHours, target }
 }
