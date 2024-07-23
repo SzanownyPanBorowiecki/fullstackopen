@@ -39,6 +39,7 @@ export const calculateExercises = (
       case 1: return 'bad';
       case 2: return 'not bad';
       case 3: return 'good';
+      default: return '?';
     }
   })();
 
