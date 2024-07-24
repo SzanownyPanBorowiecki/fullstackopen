@@ -1,18 +1,6 @@
 interface Params {
   exerciseHours: number[],
   target: number
-};
-
-const parseArguments = (args: string[]): Params => {
-  if (args.length < 4) throw new Error('Not enough arguments');
-
-  const target = Number(args[2]);
-  const exerciseHours = args.slice(3).map(Number);
-  if (exerciseHours.some(isNaN) || isNaN(target)) {
-    throw new Error('Provided values were not numbers!');
-  }
-
-  return { exerciseHours, target }
 }
 
 interface Result {
@@ -23,7 +11,20 @@ interface Result {
   ratingDescription: string,
   target: number,
   average: number
+}
+
+const parseArguments = (args: string[]): Params => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+
+  const target = Number(args[2]);
+  const exerciseHours = args.slice(3).map(Number);
+  if (exerciseHours.some(isNaN) || isNaN(target)) {
+    throw new Error('Provided values were not numbers!');
+  }
+
+  return { exerciseHours, target };
 };
+
 
 export const calculateExercises = (
   exerciseHours: number[],
@@ -33,7 +34,7 @@ export const calculateExercises = (
   const trainingDays = exerciseHours.filter(num => num).length;
   const average = exerciseHours.reduce((total, num) => total += num, 0) / periodLength;
   const success = average >= target;
-  const rating = Math.floor(Math.min(2*(average/target)+1, 3));
+  const rating = Math.floor(Math.min(2 * (average / target) + 1, 3));
   const ratingDescription = (() => {
     switch (rating) {
       case 1: return 'bad';
@@ -51,8 +52,8 @@ export const calculateExercises = (
     ratingDescription,
     target,
     average
-  }
-}
+  };
+};
 
 try {
   const { exerciseHours, target } = parseArguments(process.argv);
