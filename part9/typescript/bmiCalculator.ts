@@ -35,7 +35,7 @@ export const calculateBmi = (height: number, weight: number): BmiCategory => {
   if (bmi >= 25 && bmi < 30){ return "Overweight (Pre-obese)" };
   if (bmi >= 30 && bmi < 35){ return "Obese (Class I)" };
   if (bmi >= 35 && bmi < 40){ return "Obese (Class II)" };
-  if (bmi >= 40){ return "Obese (Class III)" }
+  return "Obese (Class III)";
 }
 
 try {
